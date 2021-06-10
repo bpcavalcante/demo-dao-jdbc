@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +27,42 @@ public class SellerDAOJDBC implements SellerDAO {
 
 	@Override
 	public void insert(Seller obj) {
-		// TODO Auto-generated method stub
-
+		
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement(
+					"INSERT INTO seller " +
+					"(Name, Email, BirthDate, BaseSalary, DepartmentId) "
+					+  "VALUES (?, ?, ?, ?, ?)" ,
+					Statement.RETURN_GENERATED_KEYS);
+			
+			st.setString(1, obj.getName());
+			st.setString(2, obj.getEmail());
+			st.setDate(3, new Date(obj.getBirthDate().getTime()));
+			st.setDouble(4, obj.getBaseSalary());
+			st.setInt(5, obj.getDepartment().getId());
+			
+			int rowsAffected = st.executeUpdate();
+			
+			if (rowsAffected > 0) {
+				ResultSet  rs = st.getGeneratedKeys();
+				if (rs.next()) {
+					int id = rs.getInt(1);
+					obj.setId(id);
+				}
+				DB.closeResultSet(rs);
+			}
+			else {
+				throw new DbException("Erro inesperado! Não tem linhas afetdas");
+			}
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			
+		}
+		
 	}
 
 	@Override
@@ -48,8 +84,10 @@ public class SellerDAOJDBC implements SellerDAO {
 		ResultSet rs = null;
 		try {
 			st = conn
-					.prepareStatement("SELECT SELLER.*,DEPARTMENT.NAME AS DEPNAME" + "FROM SELLER INNER JOIN DEPARTMENT"
-							+ "ON SELLER.DEPARTMENTID = DEPARTMENT.ID" + "WHERE SELLER.ID = ?");
+					.prepareStatement("SELECT seller.*,department.Name as DepName " + 
+							"FROM seller INNER JOIN department " + 
+							"ON seller.DepartmentId = department.Id " + 
+							"WHERE seller.Id = ?");
 			st.setInt(1, id);
 			rs = st.executeQuery();
 
