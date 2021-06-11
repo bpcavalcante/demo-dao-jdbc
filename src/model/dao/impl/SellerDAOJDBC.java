@@ -10,7 +10,6 @@ import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.AbstractQueuedLongSynchronizer;
 
 import db.DB;
 import db.DbException;
@@ -65,9 +64,8 @@ public class SellerDAOJDBC implements SellerDAO {
 	public void update(Seller obj) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("UPDATE seller " + 
-					"SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? " + 
-					"WHERE Id = ? ");
+			st = conn.prepareStatement("UPDATE seller "
+					+ "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? " + "WHERE Id = ? ");
 
 			st.setString(1, obj.getName());
 			st.setString(2, obj.getEmail());
@@ -91,14 +89,13 @@ public class SellerDAOJDBC implements SellerDAO {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement("DELETE FROM SELLER WHERE ID = ?");
-			
+
 			st.setInt(1, id);
-			
+
 			st.executeUpdate();
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
 		}
 
