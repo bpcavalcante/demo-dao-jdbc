@@ -55,7 +55,6 @@ public class SellerDAOJDBC implements SellerDAO {
 			throw new DbException(e.getMessage());
 		} finally {
 			DB.closeStatement(st);
-
 		}
 
 	}

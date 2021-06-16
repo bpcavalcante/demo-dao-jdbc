@@ -30,6 +30,12 @@ public class Program2 {
 			System.out.println(department);
 		}
 		
+		System.out.println();
+		
+		System.out.println("Test Insert department");
+		Department department = new Department(6, "Logistica");
+		departmentDao.insert(department);
+		System.out.println("Inserted ! New id = " + department.getId());
 		
 	}
 
